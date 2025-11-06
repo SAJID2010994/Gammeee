@@ -53,11 +53,13 @@ else if(srch.get('state')=='host'){
 	peer = new Peer()
 	peer.on('open',(id)=>{
 		MyId=id
-		console.log(id)
+		copy(id)
 	})
 	peer.on('connection',(c)=>{
+		alert('Connected')
 		connections.push(c)
 		c.on('open',()=>{
+			alert('opened')
 			c.send({
 	type: 'create',
 	name: playerName,
