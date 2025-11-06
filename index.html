@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+</head>
+
+<body>
+	<button id="host" onclick="host()">Host</button>
+	<button id="join" onclick="join()">Join</button>
+<button onclick="singleplayer()">Single player</button>
+<input type="text" id="name" placeholder="Enter your name......"/>
+	<script>
+		function join(){
+		let id=prompt('Enter host id:')
+		let a=document.createElement('a')
+		a.setAttribute('href',`game.html?name=${document.getElementById('name').value}&state=join&id=${id}`)
+		a.click()
+		}
+		function host(){
+			let a = document.createElement('a')
+a.setAttribute('href', `game.html?state=host&name=${document.getElementById('name').value}`)
+a.click()
+		}
+		function singleplayer(){
+let a = document.createElement('a')
+a.setAttribute('href', `game.html?state=singleplayer&name=${document.getElementById('name').value}`)
+a.click()
+		}
+	</script>
+</body>
+
+</html>
