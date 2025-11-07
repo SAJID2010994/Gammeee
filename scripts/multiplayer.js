@@ -1,138 +1,48 @@
 let srch = new window.URLSearchParams(window.location.search)
-let pending;
-let connections=[]
 playerName=srch.get('name')
-let peer;
-let con;
-let MyId=null
-let hostId=srch.get('id')
-if (srch.get('state')=='join') {
-	peer = new Peer(null,{
-		secure:true,
-  config: {
-    iceServers: [
-      { urls: 'stun:stun.l.google.com:19302' },
-      {
-        urls: 'turn:relay1.expressturn.com:3478',
-        username: 'efree',
-        credential: 'efree'
-      }
-    ]
-  }
-});
+let firebaseConfig = {
+  apiKey: "AIzaSyAgh6tgMLRw3lorvn8jB_OYeHUEfxsaYg4",
+  authDomain: "web-app-3b97c.firebaseapp.com",
+  databaseURL: "https://web-app-3b97c-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "web-app-3b97c",
+  storageBucket: "web-app-3b97c.firebasestorage.app",
+  messagingSenderId: "387841859965",
+  appId: "1:387841859965:web:ef75d55497dddc882a6c14"
+};
+let firebaseApp
+let db
+function multiplayer() {
+if (srch.get('state') == 'multiplayer') {
+	firebase.initializeApp(firebaseConfig)
+	db = firebase.database()
+	db.ref().once('value').then((snap)=>{
+		Object.keys(snap.val()).forEach((e)=>{
+			if (playerName != e) {
+players[e]=new Player({ state: snap.val()[e].state, direction: snap.val()[e].direction, scale: 1.8, x: 10, y: 10, name:e, showName: true })
+db.ref(e).on('value',snap=>{
+	players[e].x=snap.val().x
+	players[e].y=snap.val().y
+	if (players[e].direction != snap.val().direction || players[e].state != snap.val().state) {
+	players[e].play({
+		name: snap.val().direction + `_${snap.val().state}`
+	})
+	players[e].state = snap.val().state
+players[e].direction = snap.val().direction
+}
+})
 
-	peer.on('open', (myid) => {
-		MyId=myid
-	con = peer.connect(hostId)
-	con.on('open', () => {
-	  con.send({
-	    type:'create',
-	    name:playerName,
-	    id:MyId
-	  })
-		players.main.onChange = () => {
-			con.send({
-			  type:'state',
-				x: players.main.x,
-				y: players.main.y,
-				direction: players.main.direction,
-				state: players.main.state,
-				id:MyId
-			})
-		}
-		con.on('data', (data) => {
-		  if(data.type=='state'){
-		    players[data.id].x = data.x
-			players[data.id].y = data.y
-			if (players[data.id].direction != data.direction || players[data.id].state != data.state) {
-				players[data.id].play({
-					name: data.direction + `_${data.state}`,
-					loop: true,
-					speed: 0.15
-				})
-				players[data.id].state = data.state
-				players[data.id].direction = data.direction
+
 			}
-		  }
-		  else if(data.type=='create') {
-  players[data.id]=new Player({state:'idle',direction:'down',scale:1.8,x:10,y:10,name:data.name})
-}
-			})
-		
-	})
-})
-}
-else if(srch.get('state')=='host'){
-	peer = new Peer(null,{
-		secure:true,
-  config: {
-    iceServers: [
-      { urls: 'stun:stun.l.google.com:19302' },
-      {
-        urls: 'turn:relay1.expressturn.com:3478',
-        username: 'efree',
-        credential: 'efree'
-      }
-    ]
-  }
-});
-
-	peer.on('open',(id)=>{
-		MyId=id
-		copy(id)
-	})
-	peer.on('connection',(c)=>{
-		alert('Connected')
-		connections.push(c)
-		c.on('open',()=>{
-			alert('opened')
-			c.send({
-	type: 'create',
-	name: playerName,
-	id:MyId
-})
+			
+		}
+		)})
+	players.main.onChange = () => {
+		db.ref(playerName).set({
+			x: players.main.x,
+			y: players.main.y,
+			state: players.main.state,
+			direction: players.main.direction
 		})
-		c.on('data',(data)=>{
-			connections.forEach((e) => {
-	if (data.id != e.peer) {
-		e.send(data)
 	}
-})
-		  if (data.type=='state') {
-				players[data.id].x = data.x
-				players[data.id].y = data.y
-				if (players[data.id].direction != data.direction || players[data.id].state != data.state) {
-				  players[data.id].play({
-				    name: data.direction + `_${data.state}`
-				  })
-				  players[data.id].state = data.state
-				  players[data.id].direction = data.direction
-				}
-		  }
-		  else if(data.type=='create'){
-		    players[data.id]=new Player({state:'idle',direction:'down',scale:1.8,x:10,y:10,name:data.name})
-		  }
-		})
-		players.main.onChange = () => {
-			connections.forEach((e)=>{
-				e.send({
-	type: 'state',
-	x: players.main.x,
-	y: players.main.y,
-	direction: players.main.direction,
-	state: players.main.state,
-	id: MyId
-})
-			})
 }
-	})
-}
-function copy(text) {
-	navigator.clipboard.writeText(text)
-		.then(() => {
-			alert("Your id has been copied to the coied to the clipboard!");
-		})
-		.catch(err => {
-			console.error("Failed to copy: ", err);
-		});
 }

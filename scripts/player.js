@@ -46,7 +46,7 @@ this.playerConatiner.addChild(this.text)
 		name: `${this.direction}_dash`,
 	})
 	this.state = 'dash'
-	players.main.onChange()
+	this.onChange()
 }
 		} catch (e) {
 
