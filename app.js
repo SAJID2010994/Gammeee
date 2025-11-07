@@ -53,6 +53,7 @@ fireSprite.play()
 
 ANIMATION_player()
 playerInitialize()
+multiplayer()
 /*
 let fire_animation=[
   new PIXI.Texture({source:fire,frame:new PIXI.Rectangle(0,0,64,64)}),new PIXI.Texture({source:fire,frame:new PIXI.Rectangle(64,0,64,64)}),new PIXI.Texture({source:fire,frame:new PIXI.Rectangle(128,0,64,64)}),new PIXI.Texture({source:fire,frame:new PIXI.Rectangle(192,0,64,64)}),new PIXI.Texture({source:fire,frame:new PIXI.Rectangle(256,0,64,64)}),new PIXI.Texture({source:fire,frame:new PIXI.Rectangle(320,0,64,64)}),new PIXI.Texture({source:fire,frame:new PIXI.Rectangle(384,0,64,64)}),new PIXI.Texture({source:fire,frame:new PIXI.Rectangle(448,0,64,64)}),new PIXI.Texture({source:fire,frame:new PIXI.Rectangle(512,0,64,64)}),new PIXI.Texture({source:fire,frame:new PIXI.Rectangle(576,0,64,64)}),new PIXI.Texture({source:fire,frame:new PIXI.Rectangle(640,0,64,64)}),new PIXI.Texture({source:fire,frame:new PIXI.Rectangle(704,0,64,64)}),new PIXI.Texture({source:fire,frame:new PIXI.Rectangle(768,0,64,64)})]

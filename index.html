@@ -8,7 +8,7 @@
 </head>
 
 <body>
-	<button id="host" onclick="host()">Host</button>
+	<button id="Multi" onclick="host()">Host</button>
 	<button id="join" onclick="join()">Join</button>
 <button onclick="singleplayer()">Single player</button>
 <input type="text" id="name" placeholder="Enter your name......"/>
@@ -21,7 +21,7 @@
 		}
 		function host(){
 			let a = document.createElement('a')
-a.setAttribute('href', `game.html?state=host&name=${document.getElementById('name').value}`)
+a.setAttribute('href', `game.html?state=multiplayer&name=${document.getElementById('name').value}`)
 a.click()
 		}
 		function singleplayer(){
