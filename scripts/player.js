@@ -1,5 +1,20 @@
 class Player{
 	constructor(data){
+		this.dashCode=()=>{
+			if (players.main.state=='dash') {
+    if (players.main.direction=='left') {
+      players.main.x-=playerSpeed*8
+    }
+    else if(players.main.direction=='right'){
+players.main.x += playerSpeed*8
+    }
+    else if (players.main.direction == 'down') {
+	players.main.y += playerSpeed * 8
+}
+    players.main.onChange()
+  }
+  
+		}
 		this.sprite=new PIXI.AnimatedSprite(players.animation.down_idle.animation)
 		this.sprite.anchor.set(0.5)
 		this.playerConatiner=new PIXI.Container()
@@ -26,8 +41,8 @@ this.playerConatiner.addChild(this.text)
 		this.sprite.scale=data.scale
 		this.playerConatiner.x=data.x
 		this.playerConatiner.y=data.y
-		this.state=data.state
-		this.direction=data.direction
+		this.state='idle'
+		this.direction='down'
 	}
 	play(data){
 		playAnimation({
@@ -106,19 +121,4 @@ players.main.sprite.onComplete = () => {
 		players.main.onChange()
 	}
 }
-app.ticker.add(()=>{
-	if (players.main.state=='dash') {
-    if (players.main.direction=='left') {
-      players.main.x-=playerSpeed*8
-    }
-    else if(players.main.direction=='right'){
-players.main.x += playerSpeed*8
-    }
-    else if (players.main.direction == 'down') {
-	players.main.y += playerSpeed * 8
-}
-    players.main.onChange()
-  }
-  
-})
 }

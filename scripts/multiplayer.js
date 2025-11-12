@@ -11,38 +11,100 @@ let firebaseConfig = {
 };
 let firebaseApp
 let db
+document.getElementById('inpBox').onkeydown=(e)=>{
+  if (e.keyCode==13) {
+    sendMesaage(document.getElementById('inpBox').value)
+    document.getElementById('inpBox').value=null
+  }
+}
+function sendMesaage(msg) {
+  var label=document.createElement('label')
+  label.innerText="<"+playerName+'>'+msg
+  document.querySelector('.messages').appendChild(label)
+  if (srch.get('state') == 'multiplayer') {
+    db.ref(`players/chat/${playerName}`).set(msg)
+  }
+}
+function addPlayer(pName,data) {
+		players[pName] = new Player({scale: 1.8, x:10, y: 10, name: pName, showName: true })
+	
+	//Setting a listener
+	db.ref(`players/container/${pName}`).on('value',snap=>{
+
+	players[pName].x = snap.val().x
+	players[pName].y = snap.val().y
+	if (players[pName].direction != snap.val().direction || players[pName].state != snap.val().state) {
+		players[pName].play({
+			name: snap.val().direction + `_${snap.val().state}`
+		})
+		players[pName].state = snap.val().state
+		players[pName].direction = snap.val().direction
+	}
+	
+
+	})
+}
 function multiplayer() {
 if (srch.get('state') == 'multiplayer') {
-	firebase.initializeApp(firebaseConfig)
-	db = firebase.database()
-	db.ref().once('value').then((snap)=>{
-		Object.keys(snap.val()).forEach((e)=>{
-			if (playerName != e) {
-players[e]=new Player({ state: snap.val()[e].state, direction: snap.val()[e].direction, scale: 1.8, x: 10, y: 10, name:e, showName: true })
-db.ref(e).on('value',snap=>{
-	players[e].x=snap.val().x
-	players[e].y=snap.val().y
-	if (players[e].direction != snap.val().direction || players[e].state != snap.val().state) {
-	players[e].play({
-		name: snap.val().direction + `_${snap.val().state}`
-	})
-	players[e].state = snap.val().state
-players[e].direction = snap.val().direction
-}
+firebase.initializeApp(firebaseConfig)
+db = firebase.database()
+
+db.ref('players/chat').on('child_changed',snap=>{
+	if (snap.key!=playerName) {
+		var label = document.createElement('label')
+label.innerText = "<" + snap.key + '>' + snap.val()
+document.querySelector('.messages').appendChild(label)
+	}
 })
 
 
-			}
-			
-		}
-		)})
-	players.main.onChange = () => {
-		db.ref(playerName).set({
-			x: players.main.x,
-			y: players.main.y,
-			state: players.main.state,
-			direction: players.main.direction
-		})
+
+db.ref('players/justJoined').on('value',snap=>{
+	if (snap.val()!=playerName) {
+addPlayer(snap.val())
 	}
+	})
+db.ref('players/justLeft').on('value',snap=>{
+	if (playerName!=snap.val()) {
+		try {
+			players[snap.val()].container.destroy()
+			db.ref(`players/container/${snap.val()}`).off()
+delete players[snap.val()]
+		} catch (e) {}
+	}
+		
+	})
+db.ref('players/justLeft').onDisconnect().set(playerName)
+db.ref(`players/online/${playerName}`).onDisconnect().remove()
+players.main.onChange = () => {
+	db.ref(`players/container/${playerName}`).update({
+		x: players.main.x,
+		y: players.main.y,
+		state: players.main.state,
+		direction: players.main.direction
+	})
+}
+db.ref(`players/container/${playerName}`).once('value').then((snap) => {
+	if (snap.val() != null) {
+		players.main.x = snap.val().x
+		players.main.y = snap.val().y
+		players.main.onChange()
+		db.ref(`players/justJoined`).set(playerName)
+	} else {
+		db.ref(`players/justJoined`).set(playerName)
+		players.main.onChange()
+	}
+})
+db.ref('players').once('value').then(snap=>{
+	
+	Object.keys(snap.val().online).forEach(e=>{
+		if (e!=playerName) {
+			addPlayer(e)
+		}
+	})
+})
+db.ref('players/justJoined').set(playerName)
+db.ref(`players/online`).update({[playerName]:1})
+
 }
 }

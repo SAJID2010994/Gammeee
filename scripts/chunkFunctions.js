@@ -161,12 +161,14 @@ requestAnimationFrame(onChunkChange)
 }
 function full() {
 
-document.documentElement.requestFullscreen()
-	
+document.documentElement
+.requestFullscreen()
+.webkitRequestFullscreen()
 	
 }
 window.ondblclick=()=>{
 	try {
+	 full()
 	}catch(e){}
 	
 }
