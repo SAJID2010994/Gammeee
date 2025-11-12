@@ -76,12 +76,21 @@ fireSprite.zIndex=10
 main_container.addChild(fireSprite)
 */
 
-window.onclick=()=>{
+document.getElementsByTagName('canvas')[0].onclick=()=>{
   players.main.dash()
  // player.sprite.animationSpeed=0.18
   
 }
-app.ticker.add(()=>{
-  playerControl()
+let passedTime=0
+app.ticker.add((dt)=>{
+  passedTime+=dt.deltaMS
+  if (passedTime>16) {
+    players.main.dashCode()
+    playerControl()
+    
+    
+    
+    passedTime=0
+  }
 })
 })()

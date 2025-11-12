@@ -15,12 +15,73 @@
 			image-rendering:crisp;
 			image-rendering:pixelated;
 		}
+		.chat{
+		  width:100vw;
+		  height:100vh;
+		  position: fixed;
+		  left: 0px;
+		  top: 0px;
+		  color: green;
+		  z-index: 10;
+		  background-color: #0000007D;
+		}
+		#inpBox{
+		  background-color:white;
+		  outline: none;
+		  border:none;
+		  width: 100vw;
+		  height: 10vh;
+		  position: relative;
+		  top: 90vh;
+		}
+		#chatBtn{
+			position: fixed;
+			z-index: 100;
+			left: 40vw;
+			width: 50px;
+		
+		}
+		.messages{
+			width: 100vw;
+			height:90vh;
+			position:fixed;
+			overflow-y: scroll;
+			left:0px;
+			top:0px;
+			display: flex;
+			flex-direction:column;
+		}
 	</style>
 </head>
 <body>
 	<div id="zone">
 		
 	</div>
+	
+	
+<button id="chatBtn" onclick="if(chatOpen){document.querySelector('.chat').setAttribute('hidden','true');document.querySelector('#zone').style.visibility='visible';chatOpen=false;document.querySelector('#inpBox').value=null;}else{document.querySelector('.chat').removeAttribute('hidden');document.querySelector('#zone').style.visibility='hidden';chatOpen=true;}">Chat</button>
+	
+<div class="chat" hidden>
+	<div class="messages">
+		
+	</div>
+  <input type="text" id="inpBox" placeholder=""/>
+</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 <!-- Firebase v8.2.6: core (firebase-app) -->
 <script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-app.js"></script>
 
@@ -48,6 +109,5 @@
 <script src="scripts/player.js"></script>
 <script src="app.js"></script>
 "></script>
-
 </body>
 </html>
