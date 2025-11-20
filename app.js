@@ -4,6 +4,7 @@ await app.init({resizeTo:window,autoDensity:true,resolution:window.devicePixelRa
 document.body.appendChild(app.view)
 main_container = new PIXI.Container()
 app.stage.addChild(main_container)
+main_container.sortableChildren = true;
 initializeCanvases(app,main_container)
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
 PIXI.AbstractRenderer.defaultOptions.roundPixels=true
@@ -77,7 +78,8 @@ main_container.addChild(fireSprite)
 */
 
 document.getElementsByTagName('canvas')[0].onclick=()=>{
-  players.main.dash()
+  //players.main.dash()
+  attackPlayer()
  // player.sprite.animationSpeed=0.18
   
 }
@@ -87,7 +89,7 @@ app.ticker.add((dt)=>{
   if (passedTime>16) {
     players.main.dashCode()
     playerControl()
-    
+    movePlayers()
     
     
     passedTime=0
