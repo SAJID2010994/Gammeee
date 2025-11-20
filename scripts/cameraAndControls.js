@@ -41,8 +41,7 @@ movement = 1
   })
 joystick.on('end', (evt, data) => {
 
-  joyd.x=0
-  joyd.y=0
+  
   movement=0
   players.main.idle()
 })

@@ -43,6 +43,9 @@ this.playerConatiner.addChild(this.text)
 		this.playerConatiner.y=data.y
 		this.state='idle'
 		this.direction='down'
+		this.health=100
+		this.serverX=0
+		this.serverY=0
 	}
 	play(data){
 		playAnimation({
@@ -100,7 +103,7 @@ this.onChange()
   }
   set y(value) {
 	this.playerConatiner.y = value
-	
+	this.playerConatiner.zIndex=value
 }
 	get y() {
 	return this.playerConatiner.y
