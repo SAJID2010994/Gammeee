@@ -77,11 +77,14 @@ fireSprite.zIndex=10
 main_container.addChild(fireSprite)
 */
 
-document.getElementsByTagName('canvas')[0].onclick=()=>{
-  //players.main.dash()
+document.getElementsByTagName('canvas')[0].ontouchstart=()=>{
+//  players.main.dash()
   attackPlayer()
  // player.sprite.animationSpeed=0.18
   
+}
+document.getElementById('dashBtn').ontouchstart=()=>{
+  players.main.dash()
 }
 let passedTime=0
 app.ticker.add((dt)=>{

@@ -22,7 +22,7 @@
 		  left: 0px;
 		  top: 0px;
 		  color: green;
-		  z-index: 10;
+		  z-index: 500;
 		  background-color: #0000007D;
 		}
 		#inpBox{
@@ -36,7 +36,7 @@
 		}
 		#chatBtn{
 			position: fixed;
-			z-index: 100;
+			z-index: 1000;
 			left: 40vw;
 			width: 50px;
 		
@@ -50,6 +50,30 @@
 			top:0px;
 			display: flex;
 			flex-direction:column;
+			font-family: mcpe;
+		}
+		label{
+			color: white;
+			z-index: 100;
+		}
+		.msgs{
+			background-color: transparent;
+			position:fixed;
+			top: 0px;
+			left: 0px;
+			width: 50%;
+			height: 50%;
+		z-index: 100;
+		display: flex;
+flex-direction:column;
+font-family: mcpe;
+overflow: hidden;
+		}
+		#dashBtn{
+			position:fixed;
+			right: 10%;
+			top:10%;
+			z-index: 500;
 		}
 	</style>
 </head>
@@ -59,7 +83,7 @@
 	</div>
 	
 	
-<button id="chatBtn" onclick="if(chatOpen){document.querySelector('.chat').setAttribute('hidden','true');document.querySelector('#zone').style.visibility='visible';chatOpen=false;document.querySelector('#inpBox').value=null;}else{document.querySelector('.chat').removeAttribute('hidden');document.querySelector('#zone').style.visibility='hidden';chatOpen=true;}">Chat</button>
+<button id="chatBtn" onclick="if(chatOpen){document.querySelector('.chat').setAttribute('hidden','true');document.querySelector('#zone').style.visibility='visible';chatOpen=false;document.querySelector('.msgs').style.visibility='visible';document.querySelector('#inpBox').value=null;}else{document.querySelector('.chat').removeAttribute('hidden');document.querySelector('#zone').style.visibility='hidden';chatOpen=true;document.querySelector('.msgs').style.visibility='hidden';}">Chat</button>
 	
 <div class="chat" hidden>
 	<div class="messages">
@@ -67,14 +91,16 @@
 	</div>
   <input type="text" id="inpBox" placeholder=""/>
 </div>
+<div class="msgs">
+	
+</div>
 	
 	
 	
 	
 	
 	
-	
-	
+	<img src="textures/dash_btn.png" id="dashBtn">
 	
 	
 	
