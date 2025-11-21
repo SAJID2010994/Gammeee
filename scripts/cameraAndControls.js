@@ -1,4 +1,5 @@
 let movement=1
+let easeT=0.7
 let isPlaying=true
 let joyd={x:0.5,y:0.5,direction:'down'}
 window.onresize=()=>{
@@ -17,11 +18,10 @@ function playerControl() {
 		}
 		camera.x = players.main.x - HalfCanvas.width
 		camera.y = players.main.y-HalfCanvas.height
-		main_container.x = -camera.x
-    main_container.y = -camera.y
+		main_container.x = -lerp(Math.abs(main_container.x),camera.x,easeT)
+    main_container.y = -lerp(Math.abs(main_container.y),camera.y,easeT)
 
 }
-
 const joystick = nipplejs.create({
   zone:document.getElementById('zone'),
   mode: 'static',
@@ -36,7 +36,9 @@ joystick.on('move', (evt, data) => {
 joyd.x = data.vector.x * playerSpeed
 joyd.y = data.vector.y * playerSpeed
 joyd.direction=data.direction.angle
-movement = 1
+if (players.main.state!='dash') {
+  movement=1
+}
  }catch(e){}
   })
 joystick.on('end', (evt, data) => {

@@ -47,4 +47,20 @@ function isColliding(obj1, obj2) {
 		return false
 	}
 }
-
+function circleRectCollision(cx, cy, r, rx, ry, rw, rh) {
+	
+	// Convert rectangle (anchor = 0.5) center to top-left
+	let left = rx - rw / 2;
+	let top = ry - rh / 2;
+	
+	// Closest point on rectangle to circle center
+	let closestX = Math.max(left, Math.min(cx, left + rw));
+	let closestY = Math.max(top, Math.min(cy, top + rh));
+	
+	// Distance from circle to closest point
+	let dx = cx - closestX;
+	let dy = cy - closestY;
+	
+	// Return true if inside circle
+	return (dx * dx + dy * dy) <= (r * r);
+}

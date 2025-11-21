@@ -11,6 +11,7 @@ let firebaseConfig = {
 };
 let firebaseApp
 let db
+
 function lerp(a, b, t) {
 	return a + (b - a) * t;
 }
@@ -21,34 +22,39 @@ document.getElementById('inpBox').onkeydown=(e)=>{
   }
 }
 function sendMesaage(msg) {
-  var label=document.createElement('label')
-  label.innerText="<"+playerName+'>'+msg
-  document.querySelector('.messages').appendChild(label)
+  var label1=document.createElement('label')
+  label1.innerText="<"+playerName+'>'+msg
+	var label2 = document.createElement('label')
+	label2.innerText = "<" + playerName + '>' + msg
+  document.querySelector('.messages').appendChild(label1)
+  document.querySelector('.msgs').appendChild(label2)
+  setTimeout(()=>{document.querySelector('.msgs').removeChild(label2)},10000)
+  
+  
+  
   if (srch.get('state') == 'multiplayer') {
     db.ref(`players/chat/${playerName}`).set(msg)
   }
 }
-function circleRectCollision(cx, cy, r, rx, ry, rw, rh) {
-	
-	// Convert rectangle (anchor = 0.5) center to top-left
-	let left = rx - rw / 2;
-	let top = ry - rh / 2;
-	
-	// Closest point on rectangle to circle center
-	let closestX = Math.max(left, Math.min(cx, left + rw));
-	let closestY = Math.max(top, Math.min(cy, top + rh));
-	
-	// Distance from circle to closest point
-	let dx = cx - closestX;
-	let dy = cy - closestY;
-	
-	// Return true if inside circle
-	return (dx * dx + dy * dy) <= (r * r);
+const ORIGINAL_TINT = players.main.tint;
+function flashRedInstant(player, duration) {
+	player.tint = 0xFF0000;
+	clearTimeout(player._flashTimeout);
+	player._flashTimeout = setTimeout(() => {
+		player.tint = ORIGINAL_TINT;
+		delete player._flashTimeout;
+	}, duration);
 }
+
+
 function attackPlayer() {
 	Object.keys(players).forEach(e => {
-		if (circleRectCollision(players.main.x, players.main.y, 256, players[e].x, players[e].y, 64, 64)) {
-			db.ref(`players/container/${e}`).update({ damage: 5, knockback: joyd })
+		if (e!='main') {
+			if (circleRectCollision(players.main.x, players.main.y, 256, players[e].x, players[e].y, 64, 64)) {
+	if (players.main.direction == VECTOR.direction({ x: players[e].x - players.main.x, y: players.main.y - players[e].y })) {
+		db.ref(`players/gettingDamaged/${e}`).update({ value: 5, updatedAt: Date.now(), x: joyd.x, y: joyd.y })
+	}
+}
 		}
 	})
 }
@@ -61,9 +67,10 @@ function addPlayer(pName,data) {
 
 	//Setting a listener
 	db.ref(`players/container/${pName}`).on('value',snap=>{
-		players[pName].serverX=snap.val().x
+	players[pName].serverX=snap.val().x
 	players[pName].serverY=snap.val().y
 	players[pName].playerConatiner.zIndex = snap.val().y
+	
 	if (players[pName].direction != snap.val().direction || players[pName].state != snap.val().state) {
 		players[pName].play({
 			name: snap.val().direction + `_${snap.val().state}`
@@ -97,9 +104,13 @@ db = firebase.database()
 
 db.ref('players/chat').on('child_changed',snap=>{
 	if (snap.key!=playerName) {
-		var label = document.createElement('label')
-label.innerText = "<" + snap.key + '>' + snap.val()
-document.querySelector('.messages').appendChild(label)
+		var label1 = document.createElement('label')
+		label1.innerText = "<" + snap.key + '>' + snap.val()
+		var label2=document.createElement('label')
+		label2.innerText = "<" + snap.key + '>' + snap.val()
+		document.querySelector('.messages').appendChild(label1)
+		document.querySelector('.msgs').appendChild(label2)
+		setTimeout(()=>{document.querySelector('.msgs').removeChild(label2)},10000)
 	}
 })
 
@@ -131,7 +142,11 @@ players.main.onChange = () => {
 	})
 }
 db.ref(`players/container/${playerName}`).once('value').then((snap) => {
-	if (snap.val() != null) {
+	
+	
+	
+	
+	if (snap.val() != null || snap.val() != undefined) {
 		players.main.x = snap.val().x
 		players.main.y = snap.val().y
 		db.ref(`players/container/${playerName}`).update({
@@ -154,9 +169,17 @@ db.ref(`players/container/${playerName}`).once('value').then((snap) => {
 	damage: 0
 })
 	}
+	
+	
+	
+	
+	
+
+
+
+
 })
 db.ref('players').once('value').then(snap=>{
-	
 	Object.keys(snap.val().online).forEach(e=>{
 		if (e!=playerName) {
 			addPlayer(e)
@@ -166,20 +189,23 @@ db.ref('players').once('value').then(snap=>{
 db.ref('players/justJoined').set(playerName)
 db.ref(`players/online`).update({[playerName]:1})
 
-
-
-
-
-
-db.ref(`players/container/${playerName}/damage`).on('value', e => {
-	players.main.health -= e.val()
-})
-db.ref(`players/container/${playerName}/knockback`).on('value', e => {
-	console.log(e.val())
-	players.main.x += e.val().x*10
-	players.main.y -= e.val().y*10
+db.ref(`players/gettingDamaged`).on('child_changed',e=>{
+	if (e.key==playerName) {
+	flashRedInstant(players.main.sprite, 120)
+	players.main.x += e.val().x * 10
+	players.main.y -= e.val().y * 10
 	players.main.onChange()
+	players.main.health -= e.val().value
+
+	}else{
+		flashRedInstant(players[e.key].sprite, 120)
+	}
 })
+
+
+
+
+
 
 }
 }

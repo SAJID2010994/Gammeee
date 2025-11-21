@@ -11,6 +11,7 @@ players.main.x += playerSpeed*8
     else if (players.main.direction == 'down') {
 	players.main.y += playerSpeed * 8
 }
+		movement=0
     players.main.onChange()
   }
   
